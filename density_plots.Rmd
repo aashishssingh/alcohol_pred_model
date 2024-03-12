@@ -1,0 +1,148 @@
+---
+title: "STATS 101C -- Kaggle Project QDA"
+author: "Group 5 Lec 1"
+date: "`r format(Sys.Date(), '%D')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: show
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+## Packages
+```{r packs, include = FALSE}
+
+library(ggfortify)
+
+library(ggplot2)
+
+library(GGally)
+
+library(gridExtra)
+
+library(class)
+
+library(ISLR)
+
+library(MASS)
+
+library(e1071)
+
+library(crossval)
+
+library(boot)
+
+library(bootstrap)
+
+library(resample)
+
+library(Rfast)
+
+library(caret)
+
+library(glmnet)
+
+library(mice)
+
+library(dplyr)
+
+```
+
+## Uploading data
+```{r}
+
+setwd("C://Users//ashis//OneDrive//Desktop//STATS_101C//Kaggle_Project//rmna")
+
+traindata <- read.csv("compdtr.csv")
+
+traindata[, 21] <- as.factor(traindata[, 21])
+traindata[, 22] <- as.factor(traindata[, 22])
+traindata[, 23] <- as.factor(traindata[, 23])
+traindata[, 24] <- as.factor(traindata[, 24])
+traindata[, 25] <- as.factor(traindata[, 25])
+traindata[, 26] <- as.factor(traindata[, 26])
+traindata[, 27] <- as.factor(traindata[, 27])
+
+testdata <- read.csv("compdts.csv")
+
+testdata[, 21] <- as.factor(testdata[, 21])
+testdata[, 22] <- as.factor(testdata[, 22])
+testdata[, 23] <- as.factor(testdata[, 23])
+testdata[, 24] <- as.factor(testdata[, 24])
+testdata[, 25] <- as.factor(testdata[, 25])
+testdata[, 26] <- as.factor(testdata[, 26])
+
+```
+
+## Density Plots
+```{r, echo = FALSE, warning = FALSE}
+
+g1 <- ggplot(traindata, aes(age, color = Alcoholic.Status)) + geom_density() 
+g1
+
+g2 <- ggplot(traindata, aes(height, color = Alcoholic.Status))+ geom_density()
+g2
+
+g3 <- ggplot(traindata, aes(weight, color = Alcoholic.Status)) + geom_density() 
+g3
+
+g4 <- ggplot(traindata, aes(waistline, color = Alcoholic.Status)) + geom_density() 
+g4
+
+g5 <- ggplot(traindata, aes(sight_left, color = Alcoholic.Status)) + geom_density() 
+g5
+
+g6 <- ggplot(traindata, aes(sight_right, color = Alcoholic.Status)) + geom_density() 
+g6
+
+g7 <- ggplot(traindata, aes(SBP, color = Alcoholic.Status)) + geom_density() 
+g7
+
+g8 <- ggplot(traindata, aes(DBP, color = Alcoholic.Status)) + geom_density() 
+g8
+
+g9 <- ggplot(traindata, aes(BLDS, color = Alcoholic.Status)) + geom_density() 
+g9
+
+g10 <- ggplot(traindata, aes(tot_chole, color = Alcoholic.Status)) + geom_density() 
+g10
+
+g11 <- ggplot(traindata, aes(HDL_chole, color = Alcoholic.Status)) + geom_density() 
+g11
+
+g12 <- ggplot(traindata, aes(LDL_chole, color = Alcoholic.Status)) + geom_density() 
+g12
+
+g13 <- ggplot(traindata, aes(triglyceride, color = Alcoholic.Status)) + geom_density() 
+g13
+
+g14 <- ggplot(traindata, aes(hemoglobin, color = Alcoholic.Status)) + geom_density() 
+g14
+
+g15 <- ggplot(traindata, aes(urine_protein, color = Alcoholic.Status)) + geom_density() 
+g15
+
+g16 <- ggplot(traindata, aes(serum_creatinine, color = Alcoholic.Status)) + geom_density() 
+g16
+
+g17 <- ggplot(traindata, aes(SGOT_AST, color = Alcoholic.Status)) + geom_density() 
+g17
+
+g18 <- ggplot(traindata, aes(SGOT_ALT, color = Alcoholic.Status)) + geom_density() 
+g18
+
+g19 <- ggplot(traindata, aes(gamma_GTP, color = Alcoholic.Status)) + geom_density() 
+g19
+
+g20 <- ggplot(traindata, aes(BMI.category, color = Alcoholic.Status)) + geom_density() 
+g20
+
+```
+
+## Bad Variables
+
+## - gamma_GTP - SGOT_ALT - SGOT_AST - secrum_creatinine - urine_protein - triglyceride - LDL_chole - HDL_chole - tot_chole - BLDS - waistline

@@ -1,0 +1,117 @@
+---
+title: "STATS 101C -- Kaggle Project xgb model"
+author: "Group 5 Lec 1"
+date: "`r format(Sys.Date(), '%D')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    code_folding: show
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+## Packages
+```{r packs, include = FALSE}
+
+library(ggfortify)
+
+library(ggplot2)
+
+library(GGally)
+
+library(gridExtra)
+
+library(class)
+
+library(ISLR)
+
+library(MASS)
+
+library(e1071)
+
+library(crossval)
+
+library(boot)
+
+library(bootstrap)
+
+library(resample)
+
+library(Rfast)
+
+# Use this library
+library(caret)
+
+library(glmnet)
+
+library(mice)
+
+library(dplyr)
+
+library(pls)
+
+library(randomForest)
+
+# Use this library
+library(xgboost)
+
+```
+
+## Uploading data
+```{r}
+
+setwd("C://Users//ashis//OneDrive//Desktop//STATS_101C//Kaggle_Project//rmna")
+
+train2 <- read.csv("TrainSAData2.csv")
+train2 <- train2[, -1]
+
+train2[, 1] <- as.integer(as.factor(train2[, 1]))
+train2[, 8] <- as.integer(as.factor(train2[, 8]))
+train2[, 9] <- as.integer(as.factor(train2[, 9]))
+train2[, 24] <- as.integer(as.factor(train2[, 24]))
+train2[, 25] <- as.integer(as.factor(train2[, 25]))
+train2[, 26] <- as.integer(as.factor(train2[, 26]))
+train2[, 27] <- as.integer(as.factor(train2[, 27]))
+
+test2 <- read.csv("TestSAData2NoY.csv")
+test2 <- test2[, -1]
+
+test2[, 1] <- as.integer(as.factor(test2[, 1]))
+test2[, 8] <- as.integer(as.factor(test2[, 8]))
+test2[, 9] <- as.integer(as.factor(test2[, 9]))
+test2[, 24] <- as.integer(as.factor(test2[, 24]))
+test2[, 25] <- as.integer(as.factor(test2[, 25]))
+test2[, 26] <- as.integer(as.factor(test2[, 26]))
+
+```
+
+## XGB Model
+```{r}
+
+cntrl <- trainControl(method = "cv", number = 5, verboseIter = TRUE)
+
+# Based on Density plots, removed tot_chole, urine_protein, and BMI.category
+
+xgb.model <- xgboost(data = as.matrix(train2[, -c(13, 18, 24, 27)]), 
+                     label = train2$Alcoholic.Status, nrounds = 25,
+                     trControl = cntrl, method = "xgbTree")
+
+```
+
+```{r}
+
+pred <- predict(xgb.model, newdata = as.matrix(test2[, -c(13, 18, 24)]), type = "response")
+
+pred_adj <- rep("N", 30000)
+
+pred_adj[pred > 1.5] <- "Y"
+
+write.csv(data.frame("ID"=c(1:30000), "Alcoholic.Status" = pred_adj), 
+          row.names = FALSE, 
+          "C://Users//ashis//OneDrive//Desktop//STATS_101C//Kaggle_Project//xgb_attempt//xgbpred41solution.csv")
+
+```
+
